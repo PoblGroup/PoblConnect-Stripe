@@ -90,22 +90,23 @@ app.post('/webhook', async (req, res) => { // express.raw({ type: "application/j
     // }
 
     // Handle the event
-    // switch (req.type) {
-    //     case 'payment_intent.created':
-    //         const paymentCreated = event.data.object;
-    //         // Then define and call a function to handle the event payment_intent.created
-    //         processEmail();
-    //         break;
-    //     case 'payment_intent.succeeded':
-    //         const paymentSucceeded = event.data.object;
-    //         // Then define and call a function to handle the event payment_intent.succeeded
-    //         break;
-    //     default:
-    //         console.log(`Unhandled event type ${event.type}`);
-    // }
+    switch (eventType) {
+        case 'payment_intent.created':
+            // const paymentCreated = event.data.object;
+            // Then define and call a function to handle the event payment_intent.created
+            processEmail();
+            break;
+        case 'payment_intent.succeeded':
+            console.log('Payment Succeeded');
+            // const paymentSucceeded = event.data.object;
+            // Then define and call a function to handle the event payment_intent.succeeded
+            break;
+        default:
+            console.log("Unhandled event type");
+    }
 
     // Return a 200 response to acknowledge receipt of the event
-    res.send(eventType);
+    res.send();
 })
     
 app.listen(process.env.PORT || 3000)
