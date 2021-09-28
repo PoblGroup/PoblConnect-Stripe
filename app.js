@@ -71,20 +71,20 @@ app.get('/webhook', (req, res) => {
     res.json("Stripe Webhook Endpoint")
 })
 
-app.post('/webhook', express.raw({ type: "application/json" }), async (req, res) => {
+app.post('/webhook', (req, res) => { // express.raw({ type: "application/json" })
     // Ensure call is from stripe
-    const payload = req.body
-    const sig = req.headers['stripe-signature']
-    const endpointSecret = 'whsec_RrWqnwDN8p3SQM4hQXIWbyIHNeFo3fU0'
+    // const payload = req.body
+    // const sig = req.headers['stripe-signature']
+    // const endpointSecret = 'whsec_RrWqnwDN8p3SQM4hQXIWbyIHNeFo3fU0'
 
-    let event;
+    // let event;
 
-    try {
-        event = stripe.webhooks.constructEvent(payload, sig, endpointSecret);
-    } catch (err) {
-        response.status(400).send(`Webhook Error: ${err.message}`);
-        return;
-    }
+    // try {
+    //     event = stripe.webhooks.constructEvent(payload, sig, endpointSecret);
+    // } catch (err) {
+    //     response.status(400).send(`Webhook Error: ${err.message}`);
+    //     return;
+    // }
 
     // Handle the event
     switch (event.type) {
