@@ -46,8 +46,8 @@ const sendMail = async (eventObj) => {
             from: 'rich.griffiths89@gmail.com',
             to: 'richard.griffiths1@poblgroup.co.uk',
             subject: 'Hello From Stripe',
-            text: `New Payment! Amount: ${totalAmount}`,
-            html: `<h2>New Payment Created!</h2><p>Total Amount Paid: <strong>${totalAmount}</strong></p><p>`
+            text: `New Payment! Amount: ${amount}`,
+            html: `<h2>New Payment Created!</h2><p>Total Amount Paid: <strong>${amount}</strong></p><p>`
         };
 
         const result = await transport.sendMail(mailOptions)
