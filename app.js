@@ -10,31 +10,49 @@ app.use(cors({
 }))
 
 const stripe = require('stripe')(process.env.STRIPE_PRIVATE_KEY)
+const {google} = require('googleapis')
 const nodemailer = require('nodemailer');
 
-const processEmail = () => {
-    let transporter = nodemailer.createTransport({
-        service: 'gmail',
-        auth: {
-            user: 'rich.griffiths89@gmail.com',
-            pass: 'griffiths01'
-        }
-    });
-      
-    let mailOptions = {
-        from: 'rich.griffiths89@gmail.com',
-        to: 'richard.griffiths1@poblgroup.co.uk',
-        subject: 'New Payment Created',
-        text: 'Testing Email'
-    };
-      
-    transporter.sendMail(mailOptions, function(error, info){
-        if (error) {
-            console.log(error);
-        } else {
-            console.log('Email sent: ' + info.response);
-        }
-    });
+const CLIENT_ID = '150412397872-1upb1ov0jqag8lvk2cu2el5vt6nb6hgo.apps.googleusercontent.com'
+const CLIENT_SECRET = 'UupPHsPXiPhydATPmD5w-Ejh'
+const REDIRECT_URI = 'https://developers.google.com/oauthplayground'
+const REFRESH_TOKEN = '1//04KySRQdUODV_CgYIARAAGAQSNwF-L9Irkc_jy7bYXFX_osdLe8Y5fLJ_vWY3CSq-Ti8DGYlnEloxBWDudHmU9bY9QChdzeV9fUg'
+
+const oAuth2Client = new google.auth.OAuth2(CLIENT_ID, CLIENT_SECRET, REDIRECT_URI)
+oAuth2Client.setCredentials({refresh_token: REFRESH_TOKEN})
+
+const sendMail = async () => {
+    try {
+        // Get access token
+        const accessToken = await oAuth2Client.getAccessToken()
+
+        // Mailing
+        const transport = nodemailer.createTransport({
+            service: 'gmail',
+            auth: {
+                type: 'OAuth2',
+                user: 'rich.griffiths89@gmail.com',
+                clientId: CLIENT_ID,
+                clientSecret: CLIENT_SECRET,
+                refreshToken: REFRESH_TOKEN,
+                accessToken: accessToken
+            }
+        })
+
+        const mailOptions = {
+            from: 'rich.griffiths89@gmail.com',
+            to: 'richard.griffiths1@poblgroup.co.uk',
+            subject: 'Hello From Stripe',
+            text: 'New Payment Created!',
+            html: '<h1>New Payment Created!</h1>'
+        };
+
+        const result = await transport.sendMail(mailOptions)
+        return result
+
+    } catch (error) {
+        return error
+    }
 }
 
 // GET ROUTE
@@ -90,12 +108,8 @@ app.post('/webhook', express.raw({ type: "application/json" }), async (req, res)
         case 'payment_intent.created':
             console.log("PAYMENT CREATED")
             const paymentCreated = event.data.object;
-            try {
-                processEmail();
-            } catch (error) {
-                res.status(500).send("Could not process email.");
-                return;
-            }
+            sendMail().then(result => console.log('Email Sent...', result))
+            .catch(err => console.log(err.message))
             break;
         case 'payment_intent.succeeded':
             console.log('PAYMENT SUCCEEDED');
