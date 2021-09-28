@@ -87,7 +87,7 @@ app.post('/webhook', (req, res) => { // express.raw({ type: "application/json" }
     // }
 
     // Handle the event
-    switch (event.type) {
+    switch (req.type) {
         case 'payment_intent.created':
             const paymentCreated = event.data.object;
             // Then define and call a function to handle the event payment_intent.created
