@@ -59,6 +59,18 @@ app.post('/webhook'),
 
         try {
             event = stripe.webhooks.constructEvent(payload, sig, endpointSecret);
+
+            switch (event.type) {
+                case 'payment_intent.created':
+                    const paymentCreated = event.data.object;
+                    break;
+                case 'payment_intent.succeeded':
+                    const paymentSucceeded = event.data.object;
+                    break;
+                default:
+                    console.log(`Unhandled event type ${event.type}`);
+            }
+
         } catch (error) {
             console.log(error.message)
             res.status(400).json({success: failed})
