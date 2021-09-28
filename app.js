@@ -13,15 +13,20 @@ const stripe = require('stripe')(process.env.STRIPE_PRIVATE_KEY)
 const {google} = require('googleapis')
 const nodemailer = require('nodemailer');
 
-const CLIENT_ID = '150412397872-1upb1ov0jqag8lvk2cu2el5vt6nb6hgo.apps.googleusercontent.com'
-const CLIENT_SECRET = 'UupPHsPXiPhydATPmD5w-Ejh'
-const REDIRECT_URI = 'https://developers.google.com/oauthplayground'
-const REFRESH_TOKEN = '1//04KySRQdUODV_CgYIARAAGAQSNwF-L9Irkc_jy7bYXFX_osdLe8Y5fLJ_vWY3CSq-Ti8DGYlnEloxBWDudHmU9bY9QChdzeV9fUg'
+const CLIENT_ID = process.env.CLEINT_ID
+const CLIENT_SECRET = process.env.CLEINT_SECRET
+const REDIRECT_URI = process.env.REDIRECT_URI
+const REFRESH_TOKEN = process.env.REFRESH_TOKEN
 
 const oAuth2Client = new google.auth.OAuth2(CLIENT_ID, CLIENT_SECRET, REDIRECT_URI)
 oAuth2Client.setCredentials({refresh_token: REFRESH_TOKEN})
 
-const sendMail = async () => {
+const sendMail = async (eventObj) => {
+
+    const totalAmount = eventObj.amount_total
+    const stripeCustomerId = eventObj.customer
+    const stripeCustomerEmail = eventObj.customer_details.email
+
     try {
         // Get access token
         const accessToken = await oAuth2Client.getAccessToken()
@@ -43,8 +48,10 @@ const sendMail = async () => {
             from: 'rich.griffiths89@gmail.com',
             to: 'richard.griffiths1@poblgroup.co.uk',
             subject: 'Hello From Stripe',
-            text: 'New Payment Created!',
-            html: '<h1>New Payment Created!</h1>'
+            text: `New Payment! Amount: ${totalAmount} Customer: ${stripeCustomerId} (${stripeCustomerEmail})`,
+            html: `<h2>New Payment Created!</h2>
+            <p>Total Amount Paid: <strong>${totalAmount}</strong></p><p>
+            <p>Customer: <strong>${stripeCustomerId} (${stripeCustomerEmail})</strong></p><p>`
         };
 
         const result = await transport.sendMail(mailOptions)
@@ -106,14 +113,13 @@ app.post('/webhook', express.raw({ type: "application/json" }), async (req, res)
     // Handle the event
     switch (event.type) {
         case 'payment_intent.created':
-            console.log("PAYMENT CREATED")
             const paymentCreated = event.data.object;
-            sendMail().then(result => console.log('Email Sent...', result))
-            .catch(err => console.log(err.message))
+            console.log("PAYMENT CREATED", paymentCreated)
             break;
         case 'payment_intent.succeeded':
-            console.log('PAYMENT SUCCEEDED');
             const paymentSucceeded = event.data.object;
+            console.log('PAYMENT SUCCEEDED');
+            sendMail(paymentSucceeded).then(result => console.log('Email Sent...', result)).catch(err => console.log(err.message))
             break;
         default:
             console.log("Unhandled event type");
