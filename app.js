@@ -102,7 +102,7 @@ app.post('/webhook', async (req, res) => { // express.raw({ type: "application/j
     // }
 
     // Return a 200 response to acknowledge receipt of the event
-    res.send("Stripe Hit This");
+    res.send(req.type);
 })
     
 app.listen(process.env.PORT || 3000)
