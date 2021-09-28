@@ -75,6 +75,10 @@ app.post('/create-checkout-session', async (req, res) => {
     }
 })
 
+app.get('/webhook', (req, res) => {
+    res.json("Stripe Webhook Endpoint")
+})
+
 app.post('/webhook'), 
     bodyParser.raw({ type: "application/json" }), 
     async (req, res) => {
