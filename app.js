@@ -81,7 +81,7 @@ app.post('/webhook', express.raw({ type: "application/json" }), async (req, res)
     try {
         event = stripe.webhooks.constructEvent(payload, sig, endpointSecret);
     } catch (err) {
-        response.status(400).send(`Webhook Error: ${err.message}`);
+        res.status(400).send(`Webhook Error: ${err.message}`);
         return;
     }
 
@@ -90,7 +90,12 @@ app.post('/webhook', express.raw({ type: "application/json" }), async (req, res)
         case 'payment_intent.created':
             console.log("PAYMENT CREATED")
             const paymentCreated = event.data.object;
-            processEmail();
+            try {
+                processEmail();
+            } catch (error) {
+                res.status(500).send("Could not process email.");
+                return;
+            }
             break;
         case 'payment_intent.succeeded':
             console.log('PAYMENT SUCCEEDED');
