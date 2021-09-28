@@ -7,7 +7,6 @@ app.use(express.json())
 const cors = require('cors')
 app.use(cors({
     origin: "https://pobl.powerappsportals.com",
-    methos: ["GET", "POST"]
 }))
 
 const stripe = require('stripe')(process.env.STRIPE_PRIVATE_KEY)
