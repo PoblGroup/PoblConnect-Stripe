@@ -71,39 +71,43 @@ app.get('/webhook', (req, res) => {
     res.json("Stripe Webhook Endpoint")
 })
 
-app.post('/webhook'), express.raw({ type: "application/json" }), async (req, res) => {
+app.post('/webhook', (req, res) => {
+    res.json("Stripe POST Webhook")
+})
 
-    // Ensure call is from stripe
-    const payload = req.body
-    const sig = req.headers['stripe-signature']
-    const endpointSecret = 'whsec_RrWqnwDN8p3SQM4hQXIWbyIHNeFo3fU0'
+// app.post('/webhook'), express.raw({ type: "application/json" }), async (req, res) => {
 
-    let event;
+//     // Ensure call is from stripe
+//     const payload = req.body
+//     const sig = req.headers['stripe-signature']
+//     const endpointSecret = 'whsec_RrWqnwDN8p3SQM4hQXIWbyIHNeFo3fU0'
 
-    try {
-        event = stripe.webhooks.constructEvent(payload, sig, endpointSecret);
-    } catch (err) {
-        response.status(400).send(`Webhook Error: ${err.message}`);
-        return;
-    }
+//     let event;
 
-        // Handle the event
-    switch (event.type) {
-        case 'payment_intent.created':
-            const paymentCreated = event.data.object;
-            // Then define and call a function to handle the event payment_intent.created
-            processEmail();
-            break;
-        case 'payment_intent.succeeded':
-            const paymentSucceeded = event.data.object;
-            // Then define and call a function to handle the event payment_intent.succeeded
-            break;
-        default:
-            console.log(`Unhandled event type ${event.type}`);
-    }
+//     try {
+//         event = stripe.webhooks.constructEvent(payload, sig, endpointSecret);
+//     } catch (err) {
+//         response.status(400).send(`Webhook Error: ${err.message}`);
+//         return;
+//     }
 
-    // Return a 200 response to acknowledge receipt of the event
-    response.send();
-}
+//         // Handle the event
+//     switch (event.type) {
+//         case 'payment_intent.created':
+//             const paymentCreated = event.data.object;
+//             // Then define and call a function to handle the event payment_intent.created
+//             processEmail();
+//             break;
+//         case 'payment_intent.succeeded':
+//             const paymentSucceeded = event.data.object;
+//             // Then define and call a function to handle the event payment_intent.succeeded
+//             break;
+//         default:
+//             console.log(`Unhandled event type ${event.type}`);
+//     }
+
+//     // Return a 200 response to acknowledge receipt of the event
+//     response.send();
+// }
     
 app.listen(process.env.PORT || 3000)
