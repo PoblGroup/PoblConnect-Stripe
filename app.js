@@ -11,12 +11,39 @@ app.use(cors({
     origin: "https://pobl.powerappsportals.com",
     methos: ["GET", "POST"]
 }))
+
 const stripe = require('stripe')(process.env.STRIPE_PRIVATE_KEY)
+const nodemailer = require('nodemailer');
 
 // const storeItems = new Map([
 //     [1, {priceInCents: 10000, name: "Test Product One" }],
 //     [2, {priceInCents: 20000, name: "Test Product Two" }]
 // ])
+
+const processEmail = () => {
+    let transporter = nodemailer.createTransport({
+        service: 'gmail',
+        auth: {
+            user: 'rich.griffiths89@gmail.com',
+            pass: 'griffiths01'
+        }
+    });
+      
+    let mailOptions = {
+        from: 'rich.griffiths89@gmail.com',
+        to: 'richard.griffiths1@poblgroup.co.uk',
+        subject: 'New Payment Created',
+        text: 'Testing Email'
+    };
+      
+    transporter.sendMail(mailOptions, function(error, info){
+        if (error) {
+            console.log(error);
+        } else {
+            console.log('Email sent: ' + info.response);
+        }
+    });
+}
 
 app.get('/', (req, res) => {
     res.json("hello world")
@@ -63,6 +90,7 @@ app.post('/webhook'),
             switch (event.type) {
                 case 'payment_intent.created':
                     const paymentCreated = event.data.object;
+                    processEmail(paymentCreated);
                     break;
                 case 'payment_intent.succeeded':
                     const paymentSucceeded = event.data.object;
@@ -81,6 +109,10 @@ app.post('/webhook'),
         console.log(event.data.object)
 
         res.json({ success: true})
-    }
+}
+
+const processEmail = () => {
+
+}
     
 app.listen(process.env.PORT || 3000)
