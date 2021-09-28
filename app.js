@@ -72,6 +72,9 @@ app.get('/webhook', (req, res) => {
 })
 
 app.post('/webhook', async (req, res) => { // express.raw({ type: "application/json" })
+
+    const eventType = req.body.type;
+
     // Ensure call is from stripe
     // const payload = req.body
     // const sig = req.headers['stripe-signature']
@@ -102,7 +105,7 @@ app.post('/webhook', async (req, res) => { // express.raw({ type: "application/j
     // }
 
     // Return a 200 response to acknowledge receipt of the event
-    res.send(req.type);
+    res.send(eventType);
 })
     
 app.listen(process.env.PORT || 3000)
