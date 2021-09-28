@@ -24,8 +24,6 @@ oAuth2Client.setCredentials({refresh_token: REFRESH_TOKEN})
 const sendMail = async (eventObj) => {
 
     const totalAmount = eventObj.amount
-    const stripeCustomerEmail = eventObj.charges.data.billing_details.email
-    const stripeCustomerName = eventObj.charges.data.billing_details.name
 
     try {
         // Get access token
@@ -48,10 +46,8 @@ const sendMail = async (eventObj) => {
             from: 'rich.griffiths89@gmail.com',
             to: 'richard.griffiths1@poblgroup.co.uk',
             subject: 'Hello From Stripe',
-            text: `New Payment! Amount: ${totalAmount} Customer: ${stripeCustomerName} (${stripeCustomerEmail})`,
-            html: `<h2>New Payment Created!</h2>
-            <p>Total Amount Paid: <strong>${totalAmount}</strong></p><p>
-            <p>Customer: <strong>${stripeCustomerName} (${stripeCustomerEmail})</strong></p><p>`
+            text: `New Payment! Amount: ${totalAmount}`,
+            html: `<h2>New Payment Created!</h2><p>Total Amount Paid: <strong>${totalAmount}</strong></p><p>`
         };
 
         const result = await transport.sendMail(mailOptions)
