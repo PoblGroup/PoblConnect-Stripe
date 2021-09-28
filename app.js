@@ -92,9 +92,10 @@ app.post('/webhook', async (req, res) => { // express.raw({ type: "application/j
     // Handle the event
     switch (eventType) {
         case 'payment_intent.created':
+            console.log("PAYMENT CREATED")
             // const paymentCreated = event.data.object;
             // Then define and call a function to handle the event payment_intent.created
-            processEmail();
+            // processEmail();
             break;
         case 'payment_intent.succeeded':
             console.log('Payment Succeeded');
