@@ -43,7 +43,7 @@ app.get('/', (req, res) => {
 })
 
 // POST - Create Checkout Session (Payment)
-app.post('/create-checkout-session', async (req, res) => {
+app.post('/create-checkout-session', express.json(), async (req, res) => {
     try {
         const session = await stripe.checkout.sessions.create({
             payment_method_types: ['card'],
