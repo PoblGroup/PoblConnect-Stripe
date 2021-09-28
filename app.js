@@ -71,9 +71,6 @@ app.post('/create-checkout-session', express.json(), async (req, res) => {
 
 // POST - Stripe endpoint for business tasks after successful payment
 app.post('/webhook', express.raw({ type: "application/json" }), async (req, res) => { 
-
-    //const eventType = req.body.type;
-
     // Ensure call is from stripe
     const payload = req.body
     const sig = req.headers['stripe-signature']
@@ -92,14 +89,12 @@ app.post('/webhook', express.raw({ type: "application/json" }), async (req, res)
     switch (event.type) {
         case 'payment_intent.created':
             console.log("PAYMENT CREATED")
-            // const paymentCreated = event.data.object;
-            // Then define and call a function to handle the event payment_intent.created
-            // processEmail();
+            const paymentCreated = event.data.object;
+            processEmail();
             break;
         case 'payment_intent.succeeded':
             console.log('PAYMENT SUCCEEDED');
-            // const paymentSucceeded = event.data.object;
-            // Then define and call a function to handle the event payment_intent.succeeded
+            const paymentSucceeded = event.data.object;
             break;
         default:
             console.log("Unhandled event type");
