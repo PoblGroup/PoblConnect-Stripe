@@ -2,7 +2,7 @@ require('dotenv').config()
 
 const express = require('express')
 const app = express()
-app.use(express.json())
+// app.use(express.json())
 
 const cors = require('cors')
 app.use(cors({
@@ -37,10 +37,12 @@ const processEmail = () => {
     });
 }
 
+// GET ROUTE
 app.get('/', (req, res) => {
     res.json("hello world")
 })
 
+// POST - Create Checkout Session (Payment)
 app.post('/create-checkout-session', async (req, res) => {
     try {
         const session = await stripe.checkout.sessions.create({
@@ -67,30 +69,27 @@ app.post('/create-checkout-session', async (req, res) => {
     }
 })
 
-app.get('/webhook', (req, res) => {
-    res.json("Stripe Webhook Endpoint")
-})
+// POST - Stripe endpoint for business tasks after successful payment
+app.post('/webhook', express.raw({ type: "application/json" }), async (req, res) => { 
 
-app.post('/webhook', async (req, res) => { // express.raw({ type: "application/json" })
-
-    const eventType = req.body.type;
+    //const eventType = req.body.type;
 
     // Ensure call is from stripe
-    // const payload = req.body
-    // const sig = req.headers['stripe-signature']
-    // const endpointSecret = 'whsec_RrWqnwDN8p3SQM4hQXIWbyIHNeFo3fU0'
+    const payload = req.body
+    const sig = req.headers['stripe-signature']
+    const endpointSecret = 'whsec_RrWqnwDN8p3SQM4hQXIWbyIHNeFo3fU0'
 
-    // let event;
+    let event;
 
-    // try {
-    //     event = stripe.webhooks.constructEvent(payload, sig, endpointSecret);
-    // } catch (err) {
-    //     response.status(400).send(`Webhook Error: ${err.message}`);
-    //     return;
-    // }
+    try {
+        event = stripe.webhooks.constructEvent(payload, sig, endpointSecret);
+    } catch (err) {
+        response.status(400).send(`Webhook Error: ${err.message}`);
+        return;
+    }
 
     // Handle the event
-    switch (eventType) {
+    switch (event.type) {
         case 'payment_intent.created':
             console.log("PAYMENT CREATED")
             // const paymentCreated = event.data.object;
@@ -98,7 +97,7 @@ app.post('/webhook', async (req, res) => { // express.raw({ type: "application/j
             // processEmail();
             break;
         case 'payment_intent.succeeded':
-            console.log('Payment Succeeded');
+            console.log('PAYMENT SUCCEEDED');
             // const paymentSucceeded = event.data.object;
             // Then define and call a function to handle the event payment_intent.succeeded
             break;
