@@ -13,18 +13,15 @@ const stripe = require('stripe')(process.env.STRIPE_PRIVATE_KEY)
 const {google} = require('googleapis')
 const nodemailer = require('nodemailer');
 
-const CLIENT_ID = process.env.CLEINT_ID
-const CLIENT_SECRET = process.env.CLEINT_SECRET
+const CLIENT_ID = process.env.CLIENT_ID
+const CLIENT_SECRET = process.env.CLIENT_SECRET
 const REDIRECT_URI = process.env.REDIRECT_URI
 const REFRESH_TOKEN = process.env.REFRESH_TOKEN
 
 const oAuth2Client = new google.auth.OAuth2(CLIENT_ID, CLIENT_SECRET, REDIRECT_URI)
 oAuth2Client.setCredentials({refresh_token: REFRESH_TOKEN})
 
-const sendMail = async (eventObj) => {
-
-    const totalAmount = eventObj.amount
-
+const sendMail = async () => {
     try {
         // Get access token
         const accessToken = await oAuth2Client.getAccessToken()
