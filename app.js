@@ -4,8 +4,6 @@ const express = require('express')
 const app = express()
 app.use(express.json())
 
-const bodyParser = require('body-parser')
-
 const cors = require('cors')
 app.use(cors({
     origin: "https://pobl.powerappsportals.com",
@@ -14,11 +12,6 @@ app.use(cors({
 
 const stripe = require('stripe')(process.env.STRIPE_PRIVATE_KEY)
 const nodemailer = require('nodemailer');
-
-// const storeItems = new Map([
-//     [1, {priceInCents: 10000, name: "Test Product One" }],
-//     [2, {priceInCents: 20000, name: "Test Product Two" }]
-// ])
 
 const processEmail = () => {
     let transporter = nodemailer.createTransport({
@@ -79,40 +72,39 @@ app.get('/webhook', (req, res) => {
     res.json("Stripe Webhook Endpoint")
 })
 
-app.post('/webhook'), 
-    bodyParser.raw({ type: "application/json" }), 
-    async (req, res) => {
-        const payload = req.body
-        const sig = req.headers['stripe-signature']
-        const endpointSecret = 'whsec_RrWqnwDN8p3SQM4hQXIWbyIHNeFo3fU0'
+app.post('/webhook'), express.raw({ type: "application/json" }), async (req, res) => {
 
-        let event;
+    // Ensure call is from stripe
+    const payload = req.body
+    const sig = req.headers['stripe-signature']
+    const endpointSecret = 'whsec_RrWqnwDN8p3SQM4hQXIWbyIHNeFo3fU0'
 
-        try {
-            event = stripe.webhooks.constructEvent(payload, sig, endpointSecret);
+    let event;
 
-            switch (event.type) {
-                case 'payment_intent.created':
-                    const paymentCreated = event.data.object;
-                    processEmail(paymentCreated);
-                    break;
-                case 'payment_intent.succeeded':
-                    const paymentSucceeded = event.data.object;
-                    break;
-                default:
-                    console.log(`Unhandled event type ${event.type}`);
-            }
+    try {
+        event = stripe.webhooks.constructEvent(payload, sig, endpointSecret);
+    } catch (err) {
+        response.status(400).send(`Webhook Error: ${err.message}`);
+        return;
+    }
 
-        } catch (error) {
-            console.log(error.message)
-            res.status(400).json({success: failed})
-            return
-        }
+        // Handle the event
+    switch (event.type) {
+        case 'payment_intent.created':
+            const paymentCreated = event.data.object;
+            // Then define and call a function to handle the event payment_intent.created
+            processEmail();
+            break;
+        case 'payment_intent.succeeded':
+            const paymentSucceeded = event.data.object;
+            // Then define and call a function to handle the event payment_intent.succeeded
+            break;
+        default:
+            console.log(`Unhandled event type ${event.type}`);
+    }
 
-        console.log(event.type)
-        console.log(event.data.object)
-
-        res.json({ success: true})
+    // Return a 200 response to acknowledge receipt of the event
+    response.send();
 }
     
 app.listen(process.env.PORT || 3000)
