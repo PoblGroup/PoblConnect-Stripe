@@ -81,6 +81,7 @@ app.post('/create-checkout-session', express.json(), async (req, res) => {
                     quantity: item.quantity
                 }
             }),
+            client_reference_id: req.body.accountId,
             success_url: `${process.env.CLIENT_URL}/make-payment/payment-confirmation`,
             cancel_url: `${process.env.CLIENT_URL}/make-payment`
         })
