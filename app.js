@@ -64,7 +64,7 @@ const CreatePaymentRequest = async (eventObj) => {
         const res = await axios.post('https://prod-13.uksouth.logic.azure.com:443/workflows/156f675c1e0641fa8e7dd84456c7ac43/triggers/manual/paths/invoke?api-version=2016-06-01&sp=%2Ftriggers%2Fmanual%2Frun&sv=1.0&sig=0uYq86ShERaIS7c47G8SczrViV1OxIS3XQdKoZhbd2g', eventObj)
         console.log(res.data);
     } catch (error) {
-        console.log(error.message);
+        console.log('Error Calling Power Automate', error.message);
         return error
     }
 }
