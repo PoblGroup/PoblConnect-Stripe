@@ -12,6 +12,7 @@ app.use(cors({
 const stripe = require('stripe')(process.env.STRIPE_PRIVATE_KEY)
 const {google} = require('googleapis')
 const nodemailer = require('nodemailer');
+const axios = require('axios')
 
 const CLIENT_ID = process.env.CLIENT_ID
 const CLIENT_SECRET = process.env.CLIENT_SECRET
@@ -54,6 +55,21 @@ const sendMail = async (eventObj) => {
         return result
 
     } catch (error) {
+        return error
+    }
+}
+
+const CreatePaymentRequest = async () => {
+    try {
+        const res = await axios.post('https://prod-13.uksouth.logic.azure.com:443/workflows/156f675c1e0641fa8e7dd84456c7ac43/triggers/manual/paths/invoke?api-version=2016-06-01&sp=%2Ftriggers%2Fmanual%2Frun&sv=1.0&sig=0uYq86ShERaIS7c47G8SczrViV1OxIS3XQdKoZhbd2g', {
+            accountId: 'ACC_123',
+            totalAmount: 0.00,
+            paymentType: 'Charge',
+            paymentMethod: 'Card'
+        })
+        console.log(res.data);
+    } catch (error) {
+        console.log(error.message);
         return error
     }
 }
@@ -115,8 +131,14 @@ app.post('/webhook', express.raw({ type: "application/json" }), async (req, res)
             break;
         case 'payment_intent.succeeded':
             const paymentSucceeded = event.data.object;
-            console.log('PAYMENT SUCCEEDED');
+            console.log('PAYMENT SUCCEEDED', paymentSucceeded);
             sendMail(paymentSucceeded).then(result => console.log('Email Sent...', result)).catch(err => console.log(err.message))
+            break;
+        case 'checkout.session.completed':
+            const checkoutCompleted = event.data.object;
+            console.log('CHECKOUT COMPLETED', checkoutCompleted);
+            // Grab details and send to power automate endpoint to create payment in Dynamics
+            CreatePaymentRequest();
             break;
         default:
             console.log("Unhandled event type");
