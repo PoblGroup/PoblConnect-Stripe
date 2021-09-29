@@ -59,14 +59,10 @@ const sendMail = async (eventObj) => {
     }
 }
 
-const CreatePaymentRequest = async () => {
+const CreatePaymentRequest = async (eventObj) => {
     try {
-        const res = await axios.post('https://prod-13.uksouth.logic.azure.com:443/workflows/156f675c1e0641fa8e7dd84456c7ac43/triggers/manual/paths/invoke?api-version=2016-06-01&sp=%2Ftriggers%2Fmanual%2Frun&sv=1.0&sig=0uYq86ShERaIS7c47G8SczrViV1OxIS3XQdKoZhbd2g', {
-            accountId: 'ACC_123',
-            totalAmount: 0.00,
-            paymentType: 'Charge',
-            paymentMethod: 'Card'
-        })
+        const url = 'https://prod-13.uksouth.logic.azure.com:443/workflows/156f675c1e0641fa8e7dd84456c7ac43/triggers/manual/paths/invoke?api-version=2016-06-01&sp=%2Ftriggers%2Fmanual%2Frun&sv=1.0&sig=0uYq86ShERaIS7c47G8SczrViV1OxIS3XQdKoZhbd2g';
+        const res = await axios.post(url, eventObj)
         console.log(res.data);
     } catch (error) {
         console.log(error.message);
@@ -132,13 +128,13 @@ app.post('/webhook', express.raw({ type: "application/json" }), async (req, res)
         case 'payment_intent.succeeded':
             const paymentSucceeded = event.data.object;
             console.log('PAYMENT SUCCEEDED', paymentSucceeded);
-            sendMail(paymentSucceeded).then(result => console.log('Email Sent...', result)).catch(err => console.log(err.message))
+            // sendMail(paymentSucceeded).then(result => console.log('Email Sent...', result)).catch(err => console.log(err.message))
             break;
         case 'checkout.session.completed':
             const checkoutCompleted = event.data.object;
             console.log('CHECKOUT COMPLETED', checkoutCompleted);
             // Grab details and send to power automate endpoint to create payment in Dynamics
-            CreatePaymentRequest();
+            CreatePaymentRequest(checkoutCompleted);
             break;
         default:
             console.log("Unhandled event type");
