@@ -106,14 +106,11 @@ app.post('/create-checkout-session', express.json(), async (req, res) => {
 })
 
 // POST - Stripe endpoint for business tasks after successful payment
-app.post('/webhook', express.json(), async (req, res) => {    
-    // Ensure call is from stripe  //express.raw({ type: "application/json" })
+app.post('/webhook', express.raw({ type: "application/json" }), async (req, res) => {    
+    // Ensure call is from stripe
     const payload = req.body
     const sig = req.headers['stripe-signature']
     const endpointSecret = 'whsec_RrWqnwDN8p3SQM4hQXIWbyIHNeFo3fU0'
-
-    console.log(payload)
-
 
     let event;
 
