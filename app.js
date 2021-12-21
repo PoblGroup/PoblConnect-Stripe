@@ -110,7 +110,7 @@ app.post('/webhook', express.raw({ type: "application/json" }), async (req, res)
     // Ensure call is from stripe
     const payload = req.body
     const sig = req.headers['stripe-signature']
-    const endpointSecret = 'whsec_RrWqnwDN8p3SQM4hQXIWbyIHNeFo3fU0'
+    const endpointSecret = 'whsec_EymoqWPoFlvHQ14v0dm7D8OkLyKtIcbX'
 
     let event;
 
