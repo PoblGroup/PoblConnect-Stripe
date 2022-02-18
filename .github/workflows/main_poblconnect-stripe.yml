@@ -52,5 +52,5 @@ jobs:
         with:
           app-name: 'PoblConnect-Stripe'
           slot-name: 'Production'
-          publish-profile: ${{ secrets.AZUREAPPSERVICE_PUBLISHPROFILE_092509E920EF492F9DA3B2FFE63637B1 }}
+          publish-profile: ${{ secrets.AZUREAPPSERVICE_PUBLISHPROFILE_9519827C7EF341668EE315A39721D32D }}
           package: .
