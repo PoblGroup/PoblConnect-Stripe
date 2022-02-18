@@ -6,7 +6,7 @@ const app = express()
 
 const cors = require('cors')
 app.use(cors({
-    origin: "https://fredpobl.powerappsportals.com",
+    origin: process.env.POBL_SITE,
 }))
 
 const stripe = require('stripe')(process.env.STRIPE_PRIVATE_KEY)
