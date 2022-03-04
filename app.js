@@ -6,7 +6,7 @@ const app = express()
 
 const cors = require('cors')
 app.use(cors({
-    origin: "https://poblconnect.co.uk/",
+    origin: "https://www.poblconnect.co.uk",
 }))
 
 const stripe = require('stripe')(process.env.STRIPE_PRIVATE_KEY)
