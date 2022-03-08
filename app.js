@@ -61,7 +61,7 @@ const sendMail = async (eventObj) => {
 
 const CreatePaymentRequest = async (eventObj) => {
     try {
-        const res = await axios.post('https://prod-30.uksouth.logic.azure.com:443/workflows/5e9792746f2749ea88cc1efa955d3588/triggers/manual/paths/invoke?api-version=2016-06-01&sp=%2Ftriggers%2Fmanual%2Frun&sv=1.0&sig=LZIazG7IqkwDMiDhbgcIMfuIlzcjBqersTVMIxCSEH0', 
+        const res = await axios.post('https://prod-04.uksouth.logic.azure.com:443/workflows/0486934bf5d045b6a6af707beffbccaf/triggers/manual/paths/invoke?api-version=2016-06-01&sp=%2Ftriggers%2Fmanual%2Frun&sv=1.0&sig=U82Uhrvf8v9RbVXa3oMaoS4FH67QexeJI5vl6SMrpmM', 
         {
             "event": eventObj
         })
