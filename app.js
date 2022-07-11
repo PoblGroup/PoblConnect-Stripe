@@ -6,7 +6,7 @@ const app = express()
 
 const cors = require('cors')
 app.use(cors({
-    origin: "https://www.poblconnect.co.uk",
+    origin: "https://pobl.powerappsportals.com/",
 }))
 
 const stripe = require('stripe')(process.env.STRIPE_PRIVATE_KEY)
@@ -95,7 +95,7 @@ app.post('/create-checkout-session', express.json(), async (req, res) => {
                     quantity: item.quantity
                 }
             }),
-            client_reference_id: req.body.accountId,
+            client_reference_id: req.body.occupancyContractId,
             success_url: `${process.env.CLIENT_URL}/make-payment/payment-confirmation`,
             cancel_url: `${process.env.CLIENT_URL}/make-payment`
         })
